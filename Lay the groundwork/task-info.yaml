@@ -51,7 +51,13 @@ files:
     \ \" +\n                    \"one for mines, one for safe zones.\");\n       \
     \ }\n        \n        return CheckResult.correct();\n    }\n}\n"
   learner_created: false
-- name: src/minesweeper/Minesweeper.java
+- name: src/minesweeper/Field.java
+  visible: true
+  learner_created: true
+- name: src/minesweeper/Cell.java
+  visible: true
+  learner_created: true
+- name: src/minesweeper/Game.java
   visible: true
   learner_created: true
 feedback_link: https://hyperskill.org/projects/77/stages/426/implement#comment
@@ -59,4 +65,4 @@ status: Solved
 feedback:
   message: Congratulations!
   time: Tue, 02 Nov 2021 12:55:46 UTC
-record: -1
+record: 1

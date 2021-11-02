@@ -94,6 +94,83 @@ files:
         }
     }
   learner_created: false
+- name: src/minesweeper/Field.java
+  visible: true
+  text: |
+    package minesweeper;
+
+    import java.util.Random;
+
+    public class Field {
+        final int SIZE = 9;
+        final char UNKNOWN = '.';
+        final char MINE = 'X';
+
+        private Cell[][] cells;
+
+        public Field(int mines) {
+            cells = new Cell[SIZE][SIZE];
+
+            int numberOfMines = 0;
+            for (int i = 0; i < cells.length; i++) {
+                for (int j = 0; j < cells.length; j++) {
+                    cells[i][j] = new Cell();
+                }
+            }
+
+            while (numberOfMines < mines) {
+                Random random = new Random();
+                int row = random.nextInt(SIZE);
+                int col = random.nextInt(SIZE);
+                if (!cells[row][col].hasMine) {
+                    cells[row][col].hasMine = true;
+                    numberOfMines++;
+                }
+            }
+
+        }
+
+        public void printField() {
+            for (Cell[] row : cells) {
+                for (Cell cell : row) {
+                    System.out.print(cell.hasMine ? MINE : UNKNOWN);
+                }
+                System.out.println();
+            }
+        }
+    }
+  learner_created: true
+- name: src/minesweeper/Cell.java
+  visible: true
+  text: |
+    package minesweeper;
+
+    public class Cell {
+        boolean hasMine = false;
+    }
+  learner_created: true
+- name: src/minesweeper/Game.java
+  visible: true
+  text: |
+    package minesweeper;
+
+    import java.util.Scanner;
+
+    public class Game {
+        Field field;
+        Scanner scanner = new Scanner(System.in);
+
+        public void start() {
+            System.out.println("How many mines do you want on the field? ");
+            int mines = scanner.nextInt();
+            field = new Field(mines);
+            field.printField();
+        }
+    }
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/77/stages/427/implement#comment
-status: Unchecked
-record: -1
+status: Solved
+feedback:
+  message: Congratulations!
+  time: Tue, 02 Nov 2021 13:14:24 UTC
+record: 2
