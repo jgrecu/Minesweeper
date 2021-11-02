@@ -2,6 +2,7 @@ package minesweeper;
 
 public class Main {
     public static void main(String[] args) {
-        // write your code here
+        Minesweeper game = new Minesweeper(9, 9);
+        game.printTable();
     }
 }
