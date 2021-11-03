@@ -551,6 +551,169 @@ files:
         }
     }
   learner_created: false
+- name: src/minesweeper/Field.java
+  visible: true
+  text: |
+    package minesweeper;
+
+    import java.util.Random;
+
+    public class Field {
+        final int SIZE = 9;
+        final char UNKNOWN = '.';
+        final char MINE = 'X';
+        final char MARKED = '*';
+
+        private Cell[][] cells;
+
+        public Field(int mines) {
+            cells = new Cell[SIZE][SIZE];
+
+            int numberOfMines = 0;
+            for (int i = 0; i < cells.length; i++) {
+                for (int j = 0; j < cells.length; j++) {
+                    cells[i][j] = new Cell();
+                }
+            }
+
+            while (numberOfMines < mines) {
+                Random random = new Random();
+                int row = random.nextInt(SIZE);
+                int col = random.nextInt(SIZE);
+                if (!cells[row][col].hasMine) {
+                    cells[row][col].hasMine = true;
+                    numberOfMines++;
+                }
+            }
+
+        }
+
+        public void printField() {
+            System.out.println(" │123456789│\n—│—————————│");
+            for (int i = 0; i < cells.length; i++) {
+                System.out.print(i + 1 + "|");
+                for (int j = 0; j < cells.length; j++) {
+                    if (cells[i][j].isMarked) {
+                        System.out.print(MARKED);
+                    } else {
+                        int numberOfMines = countMines(i, j);
+                        if (numberOfMines <= 0) {
+                            System.out.print(UNKNOWN);
+                        } else {
+                            System.out.print(numberOfMines);
+                        }
+                    }
+                }
+                System.out.println("|");
+            }
+            System.out.println("—│—————————│");
+        }
+
+        public int countMines(int row, int col) {
+            int result = 0;
+
+            if (cells[row][col].hasMine) {
+                return -1;
+            }
+            int up = 1;
+            int down = 1;
+            int left = 1;
+            int right = 1;
+
+            if (row == 0) {
+                up = 0;
+            }
+            if (row == cells.length - 1) {
+                down = 0;
+            }
+            if (col == 0) {
+                left = 0;
+            }
+            if (col == cells.length - 1) {
+                right = 0;
+            }
+
+            for (int i = row - up; i <= row + down; i++) {
+                for (int j = col - left; j <= col + right; j++) {
+                    if (cells[i][j].hasMine) {
+                        result++;
+                    }
+                }
+            }
+            return result;
+        }
+
+        public boolean getCellMarked(int row, int col) {
+            return cells[row][col].isMarked;
+        }
+
+        public void setCellMarked(int row, int col, boolean value) {
+            cells[row][col].isMarked = value;
+        }
+
+        public boolean areAllMinesMarked() {
+            for (int i = 0; i < cells.length; i++) {
+                for (int j = 0; j < cells.length; j++) {
+                    if (cells[i][j].hasMine && !cells[i][j].isMarked) {
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+    }
+  learner_created: true
+- name: src/minesweeper/Cell.java
+  visible: true
+  text: |
+    package minesweeper;
+
+    public class Cell {
+        boolean hasMine = false;
+        boolean isMarked = false;
+        boolean isOpened = false;
+    }
+  learner_created: true
+- name: src/minesweeper/Game.java
+  visible: true
+  text: |
+    package minesweeper;
+
+    import java.util.Scanner;
+
+    public class Game {
+        Field field;
+        Scanner scanner = new Scanner(System.in);
+
+        public void start() {
+            System.out.println("How many mines do you want on the field? ");
+            int mines = scanner.nextInt();
+            field = new Field(mines);
+            field.printField();
+
+            int markedMines = 0;
+
+            while (!field.areAllMinesMarked() || markedMines != mines) {
+                System.out.println("Set/delete mines marks (x and y coordinates): ");
+                int col = scanner.nextInt() - 1;
+                int row = scanner.nextInt() - 1;
+                if (field.countMines(row, col) <= 0) {
+                    if (!field.getCellMarked(row, col)) {
+                        field.setCellMarked(row, col, true);
+                        markedMines++;
+                    } else {
+                        field.setCellMarked(row, col, false);
+                        markedMines--;
+                    }
+                    field.printField();
+                } else {
+                    System.out.println("There is a number here!");
+                }
+            }
+            System.out.println("Congratulations! You found all mines!");
+        }
+    }
+  learner_created: true
 feedback_link: https://hyperskill.org/projects/77/stages/430/implement#comment
 status: Unchecked
 record: -1
