@@ -4,33 +4,46 @@ import java.util.Scanner;
 
 public class Game {
     Field field;
+    Result result = new Result(this);
+    int markedMines = 0;
+    boolean isFirstTurn = true;
     Scanner scanner = new Scanner(System.in);
 
     public void start() {
-        System.out.println("How many mines do you want on the field? ");
+        System.out.print("How many mines do you want on the field? ");
         int mines = scanner.nextInt();
         field = new Field(mines);
         field.printField();
 
-        int markedMines = 0;
+        boolean isExploded = false;
 
-        while (!field.areAllMinesMarked() || markedMines != mines) {
-            System.out.println("Set/delete mines marks (x and y coordinates): ");
-            int col = scanner.nextInt() - 1;
-            int row = scanner.nextInt() - 1;
-            if (field.countMines(row, col) <= 0) {
-                if (!field.getCellMarked(row, col)) {
-                    field.setCellMarked(row, col, true);
-                    markedMines++;
-                } else {
-                    field.setCellMarked(row, col, false);
-                    markedMines--;
+        while (result.isNotGameOver()) {
+            System.out.print("Set/unset mines marks or claim a cell as free: ");
+            int col = Integer.parseInt(scanner.next()) - 1;
+            int row = Integer.parseInt(scanner.next()) - 1;
+            boolean commandMarkFree = scanner.next().equals("free");
+
+            if (commandMarkFree) {
+                if (isFirstTurn) {
+                    field.checkFirstTurn(row, col);
+                    isFirstTurn = false;
                 }
-                field.printField();
+                isExploded = result.checkExplodes(field.cells[row][col]);
+                if (isExploded) {
+                    field.printField();
+                    break;
+                } else {
+                    field.openArea(row, col);
+                }
             } else {
-                System.out.println("There is a number here!");
+                markedMines += field.markCellAsMine(field.cells[row][col]);
             }
+            field.printField();
         }
-        System.out.println("Congratulations! You found all mines!");
+        if (isExploded) {
+            System.out.println("You stepped on a mine and failed!");
+        } else {
+            System.out.println("Congratulations! You found all mines!");
+        }
     }
 }
